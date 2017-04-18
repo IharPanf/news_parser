@@ -51,13 +51,15 @@ request(url, function (error, response, body) {
                 request(item.fullNewsUrl, function (error, response, body) {
                     if (!error) {
                         var $ = cheerio.load(body);
+                        item.fullText = $('#article_body').text();
                     }
-                    item.fullText = "test";
                     callback();
                 });
             }
         }, function (err, result) {
-               console.log(listOfNews);
+            jsonfile.writeFile(file, listOfNews, function() {
+                console.log('............Ready!');
+            });
         });
     } else {
         console.log("Error: " + error);
