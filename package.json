@@ -1,0 +1,15 @@
+{
+  "name": "parser_tut",
+  "version": "1.0.0",
+  "description": "self education task",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ihar",
+  "license": "ISC",
+  "dependencies": {
+       "request": "2.81.0",
+       "cheerio": "0.22.0"
+  }
+}
