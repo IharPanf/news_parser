@@ -2,6 +2,7 @@ var request = require("request");
 var cheerio = require("cheerio");
 var url = "https://news.tut.by/";
 var jsonfile = require('jsonfile');
+var async = require('async');
 
 var file = 'data.json';
 var listOfNews = [];
@@ -18,6 +19,17 @@ function News() {
         "fullText": ""
     }
 }
+
+var getfullText = function (item) {
+    if (item.fullNewsUrl) {
+        request(item.fullNewsUrl, function (error, response, body) {
+            if (!error) {
+                var $ = cheerio.load(body);
+            }
+            item.fullText = "124";
+        });
+    }
+};
 
 request(url, function (error, response, body) {
     if (!error) {
@@ -38,50 +50,21 @@ request(url, function (error, response, body) {
                 listOfNews.push(currentNews);
             });
         });
-        var n = 0;
-        listOfNews.forEach(function (item) {
-            if (n < LIMIT) {
+
+        async.each(listOfNews, function (item, callback) {
+            if (item.fullNewsUrl) {
                 request(item.fullNewsUrl, function (error, response, body) {
                     if (!error) {
                         var $ = cheerio.load(body);
                     }
-                    item.fullText = "124";
+                    item.fullText = "test";
+                    callback();
                 });
             }
-            n++;
+        }, function (err, result) {
+            console.log(listOfNews);
         });
     } else {
         console.log("Error: " + error);
     }
 });
-
-/*for (var i = 0; i < listOfNews.length; i++) {
-    var currentFullUrl = listOfNews[0]['fullNewsUrl'];
-    console.log(currentFullUrl);
-    if (i < 5) {
-        request(currentFullUrl, function (error, response, body) {
-            if (!error) {
-                var $ = cheerio.load(body);
-                //currentNews.fullText = $(".js-mediator-article").text();
-                console.log($(".js-mediator-article").text());
-            } else {
-                console.log("Error: " + error);
-            }
-        })
-    }
-}*/
-
-/*
- if (counterForParsing < 5) {
- request(currentNews.fullNewsUrl, function (error, response, body) {
- if (!error) {
- var $ = cheerio.load(body);
- currentNews.fullText = $(".js-mediator-article").text();
- console.log(currentNews.fullText);
- } else  {
- console.log("Error: " + error);
- }
- })
- }
-
- */
