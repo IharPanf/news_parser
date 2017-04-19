@@ -22,7 +22,8 @@ function News() {
         "fullNewsUrl": null,
         "imageUrl": null,
         "shortDescription": "",
-        "fullText": ""
+        "fullText": "",
+        "info_tag": {}
     }
 }
 
@@ -38,7 +39,8 @@ request(urlParse, function (error, response, body) {
                         counterForParsing++;
                         var currentNews = new News();
                         currentNews.rubric = currentCategoryNews;
-                        currentNews.date = $(this).attr('data-tm');
+                        var currentDate = $(this).attr('data-tm');
+                        currentNews.date = new Date(currentDate * 1000);
                         currentNews.index = $(this).attr('data-id');
                         currentNews.imageUrl = $("img", this).attr('src');
                         currentNews.fullNewsUrl = $(" > a", this).attr('href');
@@ -56,24 +58,38 @@ request(urlParse, function (error, response, body) {
                     if (!error) {
                         var $ = cheerio.load(body);
                         item.fullText = $('#article_body').text();
+                        item.fullText = item.fullText.replace(/(?:\\[rn]|[\r\n]+)+/g, "");
+
+                        $('.b-article-info-tags li').each(function () {
+                            var tags = $(this).text().split(':');
+                            item.info_tag[tags[0]] = tags[1];
+                        });
+
+                        //save in MongoDB
+                        MongoClient.connect(urlDatabase, function (err, db) {
+                            assert.equal(null, err);
+
+                            var collection = db.collection('news_doc');
+                            var curNews = collection.findOne({index: item.index});
+
+                            curNews.then(function (result) {
+                                if (!result) { //insert news only in the first time
+                                    insertDocuments(db, item, function () {
+                                        db.close();
+                                    });
+                                } else {
+                                    db.close();
+                                }
+                            });
+                        });
                     }
                     callback();
                 });
             }
         }, function (err, result) {
             //save in json file
-            jsonfile.writeFile(file, listOfNews, function() {
+            jsonfile.writeFile(file, listOfNews, function () {
                 console.log('............Ready!');
-            });
-
-            //save in MongoDB
-            MongoClient.connect(urlDatabase, function(err, db) {
-                assert.equal(null, err);
-                console.log("Connected correctly to server");
-
-                insertDocuments(db, listOfNews,function() {
-                    db.close();
-                });
             });
         });
     } else {
@@ -81,13 +97,14 @@ request(urlParse, function (error, response, body) {
     }
 });
 
-var insertDocuments = function(db, listOfObj, callback) {
+var insertDocuments = function (db, item, callback) {
     // Get the documents collection
     var collection = db.collection('news_doc');
     // Insert some documents
-    collection.insertMany(listOfObj, function(err, result) {
+    collection.insertOne(item, function (err, result) {
         assert.equal(err, null);
-        console.log("Inserted " + result.ops.length +" documents into the document collection");
+        console.log("Inserted " + result.ops.length + " documents into the document collection");
         callback(result);
     });
 };
+
