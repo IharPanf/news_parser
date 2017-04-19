@@ -1,14 +1,18 @@
 var request = require("request");
 var cheerio = require("cheerio");
-var url = "https://news.tut.by/";
 var jsonfile = require('jsonfile');
 var async = require('async');
 var pCommandLine = require('optimist').argv;
+var MongoClient = require('mongodb').MongoClient;
+var assert = require('assert');
 
+var urlParse = "https://news.tut.by/";
 var file = 'data.json';
 var listOfNews = [];
 var counterForParsing = 0;
 var LIMIT = pCommandLine.limit || 5;
+var dbName = 'news';
+var urlDatabase = 'mongodb://localhost:27017/' + dbName;
 
 //Class for creating news object
 function News() {
@@ -22,7 +26,7 @@ function News() {
     }
 }
 
-request(url, function (error, response, body) {
+request(urlParse, function (error, response, body) {
     if (!error) {
         var $ = cheerio.load(body);
         $('.b-section').each(function () {
@@ -57,11 +61,33 @@ request(url, function (error, response, body) {
                 });
             }
         }, function (err, result) {
+            //save in json file
             jsonfile.writeFile(file, listOfNews, function() {
                 console.log('............Ready!');
+            });
+
+            //save in MongoDB
+            MongoClient.connect(urlDatabase, function(err, db) {
+                assert.equal(null, err);
+                console.log("Connected correctly to server");
+
+                insertDocuments(db, listOfNews,function() {
+                    db.close();
+                });
             });
         });
     } else {
         console.log("Error: " + error);
     }
 });
+
+var insertDocuments = function(db, listOfObj, callback) {
+    // Get the documents collection
+    var collection = db.collection('news_doc');
+    // Insert some documents
+    collection.insertMany(listOfObj, function(err, result) {
+        assert.equal(err, null);
+        console.log("Inserted " + result.ops.length +" documents into the document collection");
+        callback(result);
+    });
+};
