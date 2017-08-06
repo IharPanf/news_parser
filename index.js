@@ -6,13 +6,15 @@ var pCommandLine = require('optimist').argv;
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 
-var urlParse = "https://news.tut.by/";
-var file = 'data.json';
-var listOfNews = [];
+var fileOfSettings = "./settings.json";
+var settings = jsonfile.readFileSync(fileOfSettings);
+
+const LIMIT = pCommandLine.limit || settings.limit;
+var collectionName = settings.collectionName;
+var urlDatabase = settings.mongoUrl + settings.dbName;
+
 var counterForParsing = 0;
-var LIMIT = pCommandLine.limit || 5;
-var dbName = 'news';
-var urlDatabase = 'mongodb://localhost:27017/' + dbName;
+var listOfNews = [];
 
 //Class for creating news object
 function News() {
@@ -27,7 +29,7 @@ function News() {
     }
 }
 
-request(urlParse, function (error, response, body) {
+request(settings.urlParse, function (error, response, body) {
     if (!error) {
         var $ = cheerio.load(body);
         $('.b-section').each(function () {
@@ -69,7 +71,7 @@ request(urlParse, function (error, response, body) {
                         MongoClient.connect(urlDatabase, function (err, db) {
                             assert.equal(null, err);
 
-                            var collection = db.collection('news_doc');
+                            var collection = db.collection(collectionName);
                             var curNews = collection.findOne({index: item.index});
 
                             curNews.then(function (result) {
@@ -88,7 +90,7 @@ request(urlParse, function (error, response, body) {
             }
         }, function (err, result) {
             //save in json file
-            jsonfile.writeFile(file, listOfNews, function () {
+            jsonfile.writeFile(settings.fileTempData, listOfNews, function () {
                 console.log('............Ready!');
             });
         });

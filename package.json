@@ -9,9 +9,11 @@
   "author": "Ihar",
   "license": "ISC",
   "dependencies": {
-       "request": "2.81.0",
-       "cheerio": "0.22.0",
-       "jsonfile": "2.4.0",
-       "optimist": "0.6.1"
+    "async": "^2.5.0",
+    "cheerio": "0.22.0",
+    "jsonfile": "2.4.0",
+    "mongodb": "^2.2.30",
+    "optimist": "0.6.1",
+    "request": "2.81.0"
   }
 }
