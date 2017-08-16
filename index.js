@@ -3,31 +3,21 @@ var cheerio = require("cheerio");
 var jsonfile = require('jsonfile');
 var async = require('async');
 var pCommandLine = require('optimist').argv;
-var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
+
+var News = require('./classes/news');
+var DB = require('./classes/db');
 
 var fileOfSettings = "./settings.json";
 var settings = jsonfile.readFileSync(fileOfSettings);
-
-const LIMIT = pCommandLine.limit || settings.limit;
 var collectionName = settings.collectionName;
 var urlDatabase = settings.mongoUrl + settings.dbName;
+const LIMIT = pCommandLine.limit || settings.limit;
 
 var counterForParsing = 0;
 var listOfNews = [];
 
-//Class for creating news object
-function News() {
-    return {
-        "index": null,
-        "rubric": "",
-        "fullNewsUrl": null,
-        "imageUrl": null,
-        "shortDescription": "",
-        "fullText": "",
-        "info_tag": {}
-    }
-}
+var dbNews  = new DB();
 
 request(settings.urlParse, function (error, response, body) {
     if (!error) {
@@ -67,23 +57,7 @@ request(settings.urlParse, function (error, response, body) {
                             item.info_tag[tags[0]] = tags[1];
                         });
 
-                        //save in MongoDB
-                        MongoClient.connect(urlDatabase, function (err, db) {
-                            assert.equal(null, err);
-
-                            var collection = db.collection(collectionName);
-                            var curNews = collection.findOne({index: item.index});
-
-                            curNews.then(function (result) {
-                                if (!result) { //insert news only in the first time
-                                    insertDocuments(db, item, function () {
-                                        db.close();
-                                    });
-                                } else {
-                                    db.close();
-                                }
-                            });
-                        });
+                        dbNews.insertRecord(item, collectionName, urlDatabase);
                     }
                     callback();
                 });
@@ -98,15 +72,4 @@ request(settings.urlParse, function (error, response, body) {
         console.log("Error: " + error);
     }
 });
-
-var insertDocuments = function (db, item, callback) {
-    // Get the documents collection
-    var collection = db.collection('news_doc');
-    // Insert some documents
-    collection.insertOne(item, function (err, result) {
-        assert.equal(err, null);
-        console.log("Inserted " + result.ops.length + " documents into the document collection");
-        callback(result);
-    });
-};
 
