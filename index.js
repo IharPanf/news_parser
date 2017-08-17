@@ -23,9 +23,8 @@ request(settings.urlParse, function (error, response, body) {
     if (!error) {
         var $ = cheerio.load(body);
         $('.b-section').each(function () {
-            var currentCategoryNews = $(".b-lists-rubric .b-label", this).text();
-
             if (counterForParsing < LIMIT) {
+                var currentCategoryNews = $(".b-lists-rubric .b-label", this).text();
                 $(".lists__li", this).each(function () {
                     if (counterForParsing < LIMIT) {
                         counterForParsing++;
@@ -37,37 +36,33 @@ request(settings.urlParse, function (error, response, body) {
                         currentNews.imageUrl = $("img", this).attr('src');
                         currentNews.fullNewsUrl = $(" > a", this).attr('href');
                         currentNews.shortDescription = $(" > a", this).text();
+
+                        //parse full text for every news
+                        if (currentNews.fullNewsUrl) {
+                            request(currentNews.fullNewsUrl, function (error, response, body) {
+                                if (!error) {
+                                    var $ = cheerio.load(body);
+                                    currentNews.fullText = $('#article_body').text();
+                                    currentNews.fullText = currentNews.fullText.replace(/(?:\\[rn]|[\r\n]+)+/g, "");
+
+                                    $('.b-article-info-tags li').each(function () {
+                                        var tags = $(this).text().split(':');
+                                        currentNews.info_tag[tags[0]] = tags[1];
+                                    });
+
+                                    dbNews.insertRecord(currentNews, collectionName, urlDatabase);
+                                }
+                            });
+                        }
                         listOfNews.push(currentNews);
                     }
                 });
             }
         });
-
-        //parse full text for news
-        async.each(listOfNews, function (item, callback) {
-            if (item.fullNewsUrl) {
-                request(item.fullNewsUrl, function (error, response, body) {
-                    if (!error) {
-                        var $ = cheerio.load(body);
-                        item.fullText = $('#article_body').text();
-                        item.fullText = item.fullText.replace(/(?:\\[rn]|[\r\n]+)+/g, "");
-
-                        $('.b-article-info-tags li').each(function () {
-                            var tags = $(this).text().split(':');
-                            item.info_tag[tags[0]] = tags[1];
-                        });
-
-                        dbNews.insertRecord(item, collectionName, urlDatabase);
-                    }
-                    callback();
-                });
-            }
-        }, function (err, result) {
-            //save in json file
-            jsonfile.writeFile(settings.fileTempData, listOfNews, function () {
-                console.log('............Ready!');
-            });
-        });
+        //@Todo need wait while all request will be done
+/*        jsonfile.writeFile(settings.fileTempData, listOfNews, function () {
+            console.log('............Ready!');
+        });*/
     } else {
         console.log("Error: " + error);
     }
