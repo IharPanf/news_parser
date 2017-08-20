@@ -1,6 +1,6 @@
 var MongoClient = require('mongodb').MongoClient;
 
-function DB() {};
+function DB() {}
 
 DB.prototype.insertRecord = function (item, collectionName, urlDB) {
     MongoClient.connect(urlDB, function (err, db) {
@@ -24,6 +24,19 @@ DB.prototype.insertRecord = function (item, collectionName, urlDB) {
             }, function (error) {
                 console.log(error);
                 console.log('Connection closed');
+                db.close();
+            });
+        }
+    });
+};
+
+DB.prototype.returnNews = function(item, collectionName, urlDB, callback) {
+    MongoClient.connect(urlDB, function (err, db) {
+        if (err) {
+            console.log('Error connection for DB: ', err);
+        } else {
+            db.collection(collectionName).find(item).toArray(function(err, docs) {
+                callback(docs);
                 db.close();
             });
         }
