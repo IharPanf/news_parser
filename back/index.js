@@ -16,9 +16,10 @@ const LIMIT = pCommandLine.limit || settings.limit;
 
 var counterForParsing = 0;
 var listOfNews = [];
+var country = 'РЎС‚СЂР°РЅР°';
 
 var dbNews  = new DB();
-
+var selectedNews = new News();
 request(settings.urlParse, function (error, response, body) {
     if (!error) {
         var $ = cheerio.load(body);
@@ -28,7 +29,7 @@ request(settings.urlParse, function (error, response, body) {
                 $(".lists__li", this).each(function () {
                     if (counterForParsing < LIMIT) {
                         counterForParsing++;
-                        var currentNews = new News();
+                        var currentNews = selectedNews.getNews();
                         currentNews.rubric = currentCategoryNews;
                         var currentDate = $(this).attr('data-tm');
                         currentNews.date = new Date(currentDate * 1000);
@@ -50,6 +51,8 @@ request(settings.urlParse, function (error, response, body) {
                                         currentNews.info_tag[tags[0]] = tags[1];
                                     });
 
+                                    currentNews.info_tag = selectedNews.setCountry(currentNews.info_tag);
+                                    selectedNews.getCoordinates(currentNews.info_tag, settings.geocodeUrl);
                                     dbNews.insertRecord(currentNews, collectionName, urlDatabase);
                                 }
                             });
@@ -69,7 +72,9 @@ request(settings.urlParse, function (error, response, body) {
 });
 
 //get documents from collection
+/*
 dbNews.returnNews({}, collectionName, urlDatabase, function(result) {
     console.dir(result);
 });
 
+*/

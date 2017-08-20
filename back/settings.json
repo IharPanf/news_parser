@@ -1,8 +1,9 @@
 {
   "urlParse": "https://news.tut.by/",
   "fileTempData": "data.json",
-  "limit": "15",
+  "limit": "5",
   "dbName": "news",
   "collectionName": "news_doc",
-  "mongoUrl": "mongodb://localhost:27017/"
+  "mongoUrl": "mongodb://localhost:27017/",
+  "geocodeUrl": "https://maps.googleapis.com/maps/api/geocode/json?"
 }
