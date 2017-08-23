@@ -51,9 +51,16 @@ request(settings.urlParse, function (error, response, body) {
                                         currentNews.info_tag[tags[0]] = tags[1];
                                     });
 
-                                    currentNews.info_tag = selectedNews.setCountry(currentNews.info_tag);
-                                    selectedNews.getCoordinates(currentNews.info_tag, settings.geocodeUrl);
-                                    dbNews.insertRecord(currentNews, collectionName, urlDatabase);
+                                    //currentNews.info_tag = selectedNews.setCountry(currentNews.info_tag);
+                                    selectedNews.getCoordinates(currentNews.info_tag, settings.googleApiKey)
+                                        .then(function(res) {
+                                            currentNews.info_tag['latitude'] = res[0].latitude;
+                                            currentNews.info_tag['longitude'] = res[0].longitude;
+                                            dbNews.insertRecord(currentNews, collectionName, urlDatabase);
+                                        })
+                                        .catch(function(err) {
+                                            console.log('Error getting coordinates:' + err);
+                                        });
                                 }
                             });
                         }
