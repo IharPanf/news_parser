@@ -14,13 +14,6 @@ News.prototype.getNews = function() {
     }
 };
 
-News.prototype.setCountry = function(infoTag) {
-    if (infoTag && !infoTag['Страны']) {
-        infoTag['Страны'] = 'Беларусь';
-    }
-    return infoTag;
-};
-
 News.prototype.getCoordinates = function(infoTag, geoKey) {
     var address = '';
     if (infoTag) {
