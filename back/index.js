@@ -81,8 +81,6 @@ request(settings.urlParse, function (error, response, body) {
 
 //get documents from collection
 /*
-dbNews.returnNews({}, collectionName, urlDatabase, function(result) {
-    console.dir(result);
-});
+
 
 */
