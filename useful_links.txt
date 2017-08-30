@@ -1,3 +1,5 @@
 https://docs.mongodb.com/manual/geospatial-queries/ - create geospatial index
 https://docs.mongodb.com/manual/reference/method/db.collection.createIndex/ - create index
 https://habrahabr.ru/post/193458/ - RESTful API with Node.js + MongoDB (old)
+https://habrahabr.ru/company/oleg-bunin/blog/319052/ - NoSQL – коротко о главном
+https://university.mongodb.com
