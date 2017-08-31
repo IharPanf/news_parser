@@ -1,5 +1,28 @@
-<h1>
-  {{title}}
-</h1>
-
-<input type="button" name="getNews" (click)="getAllNews()" value="Get all news"/>
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <h3>
+        {{title}}
+      </h3>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <agm-map [latitude]="lat" [longitude]="lng">
+        <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
+        <agm-marker [latitude]="lat2" [longitude]="lng2"></agm-marker>
+      </agm-map>
+    </div>
+  </div>
+  <div class="row block__control" >
+    <div class="col">
+      <input type="button" name="getNews" class="btn btn-primary" (click)="getAllNews()" value="Get all news"/>
+    </div>
+  </div>
+  <hr class="devider">
+  <div class="row">
+      <div class="col">
+          Вывод новостей.....
+      </div>
+  </div>
+</div>

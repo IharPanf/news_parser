@@ -7,7 +7,12 @@ import { NewsService } from './news.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'app works!';
+  title: string = 'Self education: Парсер новостей (Mongo, NodeJs, Angular)';
+  lat: number = 53.9195866;
+  lng: number = 27.5807409;
+
+  lat2: number = 53.9795866;
+  lng2: number = 27.5907409;
 
   constructor(private newsService: NewsService) {}
 
