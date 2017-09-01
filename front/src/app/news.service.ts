@@ -4,7 +4,7 @@ import { Http, Headers} from '@angular/http';
 @Injectable()
 export class NewsService {
 
-  private urlHost: string = 'http://127.0.0.1:8080';
+  private urlHost: string = 'http://localhost:8080';
 
   public apiUrl = '/api/news';
 
@@ -26,11 +26,8 @@ export class NewsService {
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('accept', 'application/json');
-
+    
     return this.http
         .get(this.urlHost + this.apiUrl, { headers })
-        .subscribe((res) => {
-          return res.json();
-        });
   }
 }
