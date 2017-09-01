@@ -4,7 +4,7 @@ var DB = require('./classes/db');
 var jsonfile = require('jsonfile');
 
 //Todo need resolve duplicate
-var fileOfSettings = "./settings.json";
+var fileOfSettings = "./../config.json";
 var settings = jsonfile.readFileSync(fileOfSettings);
 var collectionName = settings.collectionName;
 var urlDatabase = settings.mongoUrl + settings.dbName;
