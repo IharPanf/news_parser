@@ -3,3 +3,4 @@ https://docs.mongodb.com/manual/reference/method/db.collection.createIndex/ - cr
 https://habrahabr.ru/post/193458/ - RESTful API with Node.js + MongoDB (old)
 https://habrahabr.ru/company/oleg-bunin/blog/319052/ - NoSQL – коротко о главном
 https://university.mongodb.com
+https://angular-maps.com/api-docs/agm-core/index.html

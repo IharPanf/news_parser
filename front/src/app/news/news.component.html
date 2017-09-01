@@ -1,0 +1,22 @@
+<div class="col">
+  <h4 [textContent]="item.rubric"></h4>
+  <h5 [textContent]="item.date"></h5>
+  <div class="row">
+    <div class="col-xs-2">
+      <img [src]="item.imageUrl" *ngIf="item.imageUrl">
+    </div>
+    <div class="col-xs-10">
+      <p [textContent]="item.shortDescription"></p>
+      <div class="row">
+        <a class="btn btn-success pull-right"
+           href="#" role="button"
+           (click)="toggleFullNews();"
+           [textContent]="(showFullNews ? 'Show' : 'Hide') + ' full news...'">
+        </a>
+      </div>
+      <div class="row">
+        <div [hidden]="showFullNews" [textContent]="item.fullText"></div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -9,8 +9,13 @@
   <div class="row">
     <div class="col">
       <agm-map [latitude]="lat" [longitude]="lng">
-        <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
-        <agm-marker [latitude]="lat2" [longitude]="lng2"></agm-marker>
+        <div *ngFor="let newsItem of listOfNews">
+          <agm-marker
+             [latitude]="newsItem.location.coordinates[0]"
+             [longitude]="newsItem.location.coordinates[1]"
+             [title]="newsItem.shortDescription">
+          </agm-marker>
+        </div>
       </agm-map>
     </div>
   </div>
@@ -20,17 +25,7 @@
     </div>
   </div>
   <hr class="devider">
-  <!-- Todo Create separate component for display one news -->
   <div class="row" *ngFor="let newsItem of listOfNews">
-      <div class="col">
-        <h4 [textContent]="newsItem.rubric"></h4>
-        <h5 [textContent]="newsItem.date"></h5>
-        <div>
-          <img [src]="newsItem.imageUrl" *ngIf="newsItem.imageUrl">
-          <p [textContent]="newsItem.shortDescription"></p>
-          <a class="btn btn-success pull-right" href="#" role="button" (click)="toggleFullNews()">Show full news...</a>
-          <div [hidden]="showFullNews" [textContent]="newsItem.fullText"></div>
-        </div>
-      </div>
+      <news [item]="newsItem"></news>
   </div>
 </div>
