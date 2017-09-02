@@ -1,12 +1,19 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers} from '@angular/http';
 
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/map';
+import { Observable } from 'rxjs/Observable';
+
 @Injectable()
 export class ApiService {
 
   private urlHost = 'http://localhost:8080';
 
   public apiUrl = '/api/news';
+
+  public urlGeo = 'https://maps.googleapis.com/maps/api/geocode/json?address=';
+  public geoKey = '&key=AIzaSyBT8SGysuMw9yBYZQuRcHpRzEa5JbWWs1s';
 
   /**
    *
@@ -28,5 +35,19 @@ export class ApiService {
 
     return this.http
         .get(this.urlHost + this.apiUrl, { headers });
+  }
+
+  public getCoordinates(location: string):Observable<any> {
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    headers.append('accept', 'application/json');
+    headers.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
+
+    var urlStr = this.urlGeo + location + this.geoKey;
+      return this.http.get(urlStr)
+          .map(res => res.json())
+          .catch(err => {
+            return Observable.throw(err);
+          });
   }
 }
