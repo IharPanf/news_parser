@@ -50,7 +50,7 @@ function parseCoordinate(selNews) {
             .then(function (res) {
                 selNews.location = {
                     type: "Point",
-                    coordinates: [res[0].latitude, res[0].longitude]
+                    coordinates: [res[0].latitude, res[0].longitude - 90] // 90 - convert longitude 
                 };
                 resolve();
             })
@@ -111,6 +111,8 @@ parseShortInformation(settings.urlParse).then(function (res) {
                     promisesInsertInDatabase.push(dbNews.insertRecord(res[i], collectionName, selDb));
                 }
                 Promise.all(promisesInsertInDatabase).then(function () {
+                    dbNews.createGeospatialIndex(collectionName, selDb);
+                    dbNews.createUniqueIndex(collectionName, selDb);
                     selDb.close();
                     console.log(promisesInsertInDatabase.length + ' documents were parsed. Connection close. Finish parsing...');
                 });

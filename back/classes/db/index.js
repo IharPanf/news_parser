@@ -47,4 +47,16 @@ DB.prototype.returnNews = function (item, collectionName, db, callback) {
     });
 };
 
+DB.prototype.createGeospatialIndex = function (collectionName, db) {
+    var collection = db.collection(collectionName);
+    collection.createIndex( { location: "2dsphere" } );
+    console.log('Geospatial was created');
+};
+
+DB.prototype.createUniqueIndex = function (collectionName, db) {
+    var collection = db.collection(collectionName);
+    collection.createIndex({ date: 1, shortDescription: 1 }, { unique: true });
+    console.log('Composite unique index by date / time and name was created');
+};
+
 module.exports = DB;

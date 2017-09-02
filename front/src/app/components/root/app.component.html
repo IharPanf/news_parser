@@ -12,7 +12,7 @@
         <div *ngFor="let newsItem of listOfNews">
           <agm-marker
              [latitude]="newsItem.location.coordinates[0]"
-             [longitude]="newsItem.location.coordinates[1]"
+             [longitude]="newsItem.location.coordinates[1] + 90"
              [title]="newsItem.shortDescription">
           </agm-marker>
         </div>
