@@ -103,13 +103,18 @@ function parseShortInformation(url) {
 
 // Parser
 parseShortInformation(settings.urlParse).then(function(res) {
-    Promise.all(promisesParseFullText).then(function(){
-        var promisesInsertInDatabase = [];
-        for (var i = 0; i < res.length; i++) {
-            promisesInsertInDatabase.push(dbNews.insertRecord(res[i], collectionName, urlDatabase));
-        }
-        Promise.all(promisesInsertInDatabase).then(function(){
-            console.log('finish parsing...');
-        });
-    })
+    if (res) {
+        Promise.all(promisesParseFullText).then(function(){
+            var promisesInsertInDatabase = [];
+            dbNews.connectDB(urlDatabase).then(function(selDb) {
+                for (var i = 0; i < res.length; i++) {
+                    promisesInsertInDatabase.push(dbNews.insertRecord(res[i], collectionName, selDb));
+                }
+                Promise.all(promisesInsertInDatabase).then(function(){
+                    selDb.close();
+                    console.log(promisesInsertInDatabase.length + ' documents were parsed. Connection close. Finish parsing...');
+                });
+            });
+        })
+    }
 });

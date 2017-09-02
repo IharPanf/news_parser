@@ -1,7 +1,7 @@
 {
   "urlParse": "https://news.tut.by/",
   "fileTempData": "data.json",
-  "limit": "15",
+  "limit": "200",
   "dbName": "news",
   "collectionName": "news_doc",
   "mongoUrl": "mongodb://localhost:27017/",
