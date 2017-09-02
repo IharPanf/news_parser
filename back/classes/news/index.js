@@ -2,7 +2,7 @@ var NodeGeocoder = require('node-geocoder');
 
 function News() {}
 
-News.prototype.getNews = function() {
+News.prototype.getNews = function () {
     return {
         "index": null,
         "rubric": "",
@@ -14,10 +14,10 @@ News.prototype.getNews = function() {
     }
 };
 
-News.prototype.getCoordinates = function(infoTag, geoKey) {
+News.prototype.getCoordinates = function (infoTag, geoKey) {
     var address = '';
     if (infoTag) {
-        for(var prop in infoTag) {
+        for (var prop in infoTag) {
             if (prop === 'Страны' || prop === 'Области' || prop === 'Города') {
                 address += infoTag[prop] ? (infoTag[prop] + '+').trim() : '';
             }

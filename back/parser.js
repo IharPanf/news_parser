@@ -17,13 +17,13 @@ const LIMIT = pCommandLine.limit || settings.limit;
 var counterForParsing = 0;
 var listOfNews = [];
 
-var dbNews  = new DB();
+var dbNews = new DB();
 var selectedNews = new News();
 
 var promisesParseFullText = [];
 
 function parseFullText(selNews) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         request(selNews.fullNewsUrl, function (error, response, body) {
             if (!error) {
                 var $ = cheerio.load(body);
@@ -34,7 +34,7 @@ function parseFullText(selNews) {
                     var tags = $(this).text().split(':');
                     selNews.info_tag[tags[0]] = tags[1];
                 });
-                parseCoordinate(selNews).then(function() {
+                parseCoordinate(selNews).then(function () {
                     resolve()
                 })
             } else {
@@ -45,16 +45,16 @@ function parseFullText(selNews) {
 }
 
 function parseCoordinate(selNews) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         selectedNews.getCoordinates(selNews.info_tag, settings.googleApiKey)
-            .then(function(res) {
+            .then(function (res) {
                 selNews.location = {
                     type: "Point",
                     coordinates: [res[0].latitude, res[0].longitude]
                 };
                 resolve();
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 reject();
                 console.log('Error getting coordinates:' + err);
             });
@@ -62,7 +62,7 @@ function parseCoordinate(selNews) {
 }
 
 function parseShortInformation(url) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         request(url, function (error, response, body) {
             if (!error) {
                 var $ = cheerio.load(body);
@@ -83,7 +83,7 @@ function parseShortInformation(url) {
 
                                 //parse full text for every news
                                 if (currentNews.fullNewsUrl) {
-                                    promisesParseFullText.push(parseFullText(currentNews).then(function(){
+                                    promisesParseFullText.push(parseFullText(currentNews).then(function () {
                                         listOfNews.push(currentNews);
 
                                     }));
@@ -102,15 +102,15 @@ function parseShortInformation(url) {
 }
 
 // Parser
-parseShortInformation(settings.urlParse).then(function(res) {
+parseShortInformation(settings.urlParse).then(function (res) {
     if (res) {
-        Promise.all(promisesParseFullText).then(function(){
+        Promise.all(promisesParseFullText).then(function () {
             var promisesInsertInDatabase = [];
-            dbNews.connectDB(urlDatabase).then(function(selDb) {
+            dbNews.connectDB(urlDatabase).then(function (selDb) {
                 for (var i = 0; i < res.length; i++) {
                     promisesInsertInDatabase.push(dbNews.insertRecord(res[i], collectionName, selDb));
                 }
-                Promise.all(promisesInsertInDatabase).then(function(){
+                Promise.all(promisesInsertInDatabase).then(function () {
                     selDb.close();
                     console.log(promisesInsertInDatabase.length + ' documents were parsed. Connection close. Finish parsing...');
                 });

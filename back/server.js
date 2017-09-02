@@ -9,21 +9,21 @@ var settings = jsonfile.readFileSync(fileOfSettings);
 var collectionName = settings.collectionName;
 var urlDatabase = settings.mongoUrl + settings.dbName;
 
-var dbNews  = new DB();
+var dbNews = new DB();
 
-var server = http.createServer(function(request, response) {
+var server = http.createServer(function (request, response) {
     var uri = url.parse(request.url, true);
     response.writeHead(200,
         {
             "Content-Type": "application/json, charset=windows-1251",
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Credentials": "true",
-            "Access-Control-Allow-Methods" : "GET,POST,PUT,DELETE,OPTIONS",
+            "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
             "Access-Control-Allow-Headers": "Content-Type, Access-Control-Allow-Headers, Access-Control-Allow-Origin, Authorization, X-Requested-With"
         });
     //return all news
-    dbNews.connectDB(urlDatabase).then(function(selDb) {
-        dbNews.returnNews({}, collectionName, selDb, function(result, db) {
+    dbNews.connectDB(urlDatabase).then(function (selDb) {
+        dbNews.returnNews({}, collectionName, selDb, function (result, db) {
             var outputJSON = JSON.stringify(result);
             response.end(outputJSON);
             console.log('Connection close');
@@ -32,6 +32,6 @@ var server = http.createServer(function(request, response) {
     });
 
 
-}).listen(8080, function() {
+}).listen(8080, function () {
     console.log("Server is listening port 8080...");
 });
