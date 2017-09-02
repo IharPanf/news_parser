@@ -1,15 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'news',
+  selector: 'app-news',
   templateUrl: './news.component.html',
   styleUrls: ['./news.component.css']
 })
 export class NewsComponent implements OnInit {
   @Input() item: any;
-  
-  showFullNews: boolean = true;
-  
+
+  showFullNews = true;
+
   constructor() { }
 
   ngOnInit() {

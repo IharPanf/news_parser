@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import { AgmCoreModule } from '@agm/core';
-import { NewsService } from './services/news.service';
+import { ApiService } from './services/api.service';
 import { AppComponent } from './app.component';
 import { NewsComponent } from './news/news.component';
 
@@ -21,7 +21,7 @@ import { NewsComponent } from './news/news.component';
       apiKey: 'AIzaSyBT8SGysuMw9yBYZQuRcHpRzEa5JbWWs1s'
     })
   ],
-  providers: [NewsService],
+  providers: [ApiService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
