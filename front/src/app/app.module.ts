@@ -3,10 +3,11 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
+import {MomentModule} from 'angular2-moment/moment.module';
 import { AgmCoreModule } from '@agm/core';
 import { ApiService } from './services/api.service';
-import { AppComponent } from './app.component';
-import { NewsComponent } from './news/news.component';
+import { AppComponent } from './components/root/app.component';
+import { NewsComponent } from './components/news/news.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { NewsComponent } from './news/news.component';
     HttpModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyBT8SGysuMw9yBYZQuRcHpRzEa5JbWWs1s'
-    })
+    }),
+    MomentModule
   ],
   providers: [ApiService],
   bootstrap: [AppComponent]

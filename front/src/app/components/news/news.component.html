@@ -1,6 +1,8 @@
 <div class="col">
-  <h4 [textContent]="item.rubric"></h4>
-  <h5 [textContent]="item.date"></h5>
+  <h5>
+    <span class="rubric" [textContent]="item.rubric"></span>
+  </h5>
+  <h6 [textContent]="item.date | amDateFormat:'LL'"></h6>
   <div class="row">
     <div class="col-xs-2">
       <img [src]="item.imageUrl" *ngIf="item.imageUrl">
