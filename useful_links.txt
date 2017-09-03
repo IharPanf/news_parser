@@ -6,3 +6,7 @@ https://university.mongodb.com
 https://angular-maps.com/api-docs/agm-core/index.html
 https://docs.mongodb.com/v3.0/tutorial/create-a-unique-index/
 https://docs.mongodb.com/manual/reference/operator/query/near/#op._S_near
+https://stackoverflow.com/questions/16174591/mongo-count-the-number-of-word-occurrences-in-a-set-of-documents
+https://docs.mongodb.com/v3.2/tutorial/map-reduce-examples/index.html
+https://docs.mongodb.com/manual/reference/command/mapReduce/
+https://habrahabr.ru/post/184130/ - mapreduce examples

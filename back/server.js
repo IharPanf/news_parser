@@ -35,6 +35,18 @@ router.get('/api/all_news', function (req, res) {
     });
 });
 
+//count words
+router.get('/api/count_words', function (req, res) {
+    dbNews.connectDB(urlDatabase).then(function (selDb) {
+        dbNews.countWordsInCollection(collectionName, selDb, function (result, db) {
+            var outputJSON = JSON.stringify(result);
+            res.end(outputJSON);
+            console.log('Connection close');
+            db.close();
+        });
+    });
+});
+
 //return near news
 router.get('/api/news', function (req, res) {
     var uri = url.parse(req.url, true);

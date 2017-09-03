@@ -77,4 +77,30 @@ DB.prototype.returnNearNews = function (collectionName, db, lat, lng, distance, 
     });
 };
 
+DB.prototype.countWordsInCollection = function (collectionName, db, callback) {
+    var collection = db.collection(collectionName);
+    console.log('Start...');
+    collection.mapReduce(splitText, countWords, {out: "count_word"});
+    return db.collection('count_word').find({}).sort({value:-1}).toArray(function (err, docs) {
+        callback(docs, db);
+    });
+};
+
+function splitText() {
+    var words = this.fullText.split(" ");
+    if (words) {
+        for(var i=0; i < words.length; i++) {
+            emit(words[i].toLowerCase(), 1);
+        }
+    }
+}
+
+function countWords(key, values) {
+    var count = 0;
+    values.forEach(function(v) {
+        count += v;
+    });
+    return count;
+}
+
 module.exports = DB;
