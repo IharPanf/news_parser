@@ -12,7 +12,7 @@ var fileOfSettings = "./../config.json";
 var settings = jsonfile.readFileSync(fileOfSettings);
 var collectionName = settings.collectionName;
 var urlDatabase = settings.mongoUrl + settings.dbName;
-const LIMIT = pCommandLine.limit || settings.limit;
+var LIMIT = pCommandLine.limit || settings.limit;
 
 var counterForParsing = 0;
 var listOfNews = [];

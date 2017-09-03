@@ -12,8 +12,10 @@ export class AppComponent {
   lng = 27.5807409;
   listOfNews: any = [];
   location = '';
-  locLat: number;
-  locLng: number;
+  distance: any;
+  locLat = '';
+  locLng = '';
+  emptyResults = '';
   
   constructor(private apiService: ApiService) {}
 
@@ -25,12 +27,32 @@ export class AppComponent {
     });
   }
   
-  public getCoordinates(location: string) {
-    this.apiService.getCoordinates(location).subscribe((res) => {
-      if (res && res.results && res.results[0].geometry && res.results[0].geometry.location) {
-        this.locLat = res.results[0].geometry.location.lat;
-        this.locLng = res.results[0].geometry.location.lng;
-      }
+  public getCoordinates(location: string, distance) {
+    this.distance = distance;
+    if (location) {
+      this.apiService.getCoordinates(location).subscribe((res) => {
+        if (res && res.results && res.results[0].geometry && res.results[0].geometry.location) {
+          this.locLat = res.results[0].geometry.location.lat;
+          this.locLng = res.results[0].geometry.location.lng;
+          
+          if (distance) {
+            this.getNearNews(this.locLat, this.lng, distance);
+          }
+        }
+      });
+    }
+    
+  }
+  
+  public getNearNews(lat, lng, distance) {
+    this.apiService.getNearNews(lat, lng, distance).subscribe((res) => {
+      if (res) {
+        this.listOfNews = res.json();
+        this.emptyResults = '';
+        if (this.listOfNews.length === 0) {
+          this.emptyResults = 'Нет новостей в заданном радиусе от выбранной точки';
+        }
+      } 
     });
   }
 }

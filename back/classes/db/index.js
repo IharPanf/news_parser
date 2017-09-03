@@ -59,4 +59,22 @@ DB.prototype.createUniqueIndex = function (collectionName, db) {
     console.log('Composite unique index by date / time and name was created');
 };
 
+DB.prototype.returnNearNews = function (collectionName, db, lat, lng, distance, callback) {
+    var collection = db.collection(collectionName);
+    collection.find(
+        {
+            location:
+                { $near :
+                    {
+                    $geometry: { type: "Point",  coordinates: [ parseFloat(lat), parseFloat(lng - 90) ] },
+                    $minDistance: 0,
+                    $maxDistance: parseInt(distance, 10) * 1000
+            }
+            }
+        }
+    ).toArray(function (err, docs) {
+        callback(docs, db);
+    });
+};
+
 module.exports = DB;

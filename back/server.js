@@ -22,16 +22,29 @@ var server = http.createServer(function (request, response) {
             "Access-Control-Allow-Headers": "Content-Type, Access-Control-Allow-Headers, Access-Control-Allow-Origin, Authorization, X-Requested-With"
         });
     //return all news
-    dbNews.connectDB(urlDatabase).then(function (selDb) {
+/*    dbNews.connectDB(urlDatabase).then(function (selDb) {
         dbNews.returnNews({}, collectionName, selDb, function (result, db) {
             var outputJSON = JSON.stringify(result);
             response.end(outputJSON);
             console.log('Connection close');
             db.close();
         });
+    });*/
+    //return near news
+    dbNews.connectDB(urlDatabase).then(function (selDb) {
+        dbNews.returnNearNews(collectionName, selDb, uri.query.lat, uri.query.lng, uri.query.radius, function (result, db) {
+            if (result) {
+                var outputJSON = JSON.stringify(result);
+                response.end(outputJSON);
+            } else {
+                response.end();
+            }
+
+            console.log('Connection close');
+            db.close();
+        });
     });
-
-
+    
 }).listen(8080, function () {
     console.log("Server is listening port 8080...");
 });

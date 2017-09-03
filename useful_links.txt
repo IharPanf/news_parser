@@ -5,3 +5,4 @@ https://habrahabr.ru/company/oleg-bunin/blog/319052/ - NoSQL – коротко 
 https://university.mongodb.com
 https://angular-maps.com/api-docs/agm-core/index.html
 https://docs.mongodb.com/v3.0/tutorial/create-a-unique-index/
+https://docs.mongodb.com/manual/reference/operator/query/near/#op._S_near

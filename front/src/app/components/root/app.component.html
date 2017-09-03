@@ -31,18 +31,24 @@
         </div>
         <div class="form-group mx-sm-3">
           <label for="distance">Distance: </label>
-          <input type="text" class="form-control" id="distance" placeholder="Distance" #distance>
+          <input type="text" class="form-control" id="distance" placeholder="Distance (км)" #distance>
         </div>
         <button type="submit" class="btn btn-primary" (click)="getCoordinates(location.value, distance.value)">
           Get news for selected location
         </button>
       </form>
-      {{this.locLat}}
-      {{this.locLng}}
-      {{distance.value}}
+      <div class="row" *ngIf="locLat && locLng && distance.value">
+        <div class="col-xs-12">
+          Selected location:
+          {{this.locLat}}
+          {{this.locLng}}
+          {{distance.value}}
+        </div>
+      </div>
     </div>
   </div>
-  <hr class="devider">
+  <hr>
+  <div *ngIf = "emptyResults" [textContent] = "emptyResults"></div>
   <div class="row" *ngFor="let newsItem of listOfNews">
       <app-news [item]="newsItem"></app-news>
   </div>

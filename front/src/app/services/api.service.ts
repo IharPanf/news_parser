@@ -50,4 +50,13 @@ export class ApiService {
             return Observable.throw(err);
           });
   }
+
+  public getNearNews(lat, lng, distance): any {
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    headers.append('accept', 'application/json');
+    var urlStr = this.urlHost + this.apiUrl + '?lat='+ lat +'&lng=' + lng + '&radius=' + distance;
+    console.log(urlStr);
+    return this.http.get(urlStr, { headers });
+  }
 }
