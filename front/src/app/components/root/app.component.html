@@ -21,9 +21,12 @@
   </div>
   <div class="row block__control" >
     <div class="col-xs-2">
+      <input type="button" name="countWords" class="btn btn-primary" (click)="countWords()" value="CountWords"/>
+    </div>
+    <div class="col-xs-2">
       <input type="button" name="getNews" class="btn btn-primary" (click)="getAllNews()" value="Get all news"/>
     </div>
-    <div class="col-xs-10">
+    <div class="col-xs-8">
       <form class="form-inline">
         <div class="form-group mx-sm-3">
           <label for="newsLocation">Location: </label>
@@ -39,10 +42,10 @@
       </form>
       <div class="row" *ngIf="locLat && locLng && distance.value">
         <div class="col-xs-12">
-          Selected location:
-          {{this.locLat}}
-          {{this.locLng}}
-          {{distance.value}}
+          <span>Selected location:</span>
+          <span [textContent] = "locLat"></span>
+          <span [textContent] = "locLng"></span>
+          <span [textContent] = "distance.value + ' км'"></span>
         </div>
       </div>
     </div>
@@ -51,5 +54,21 @@
   <div *ngIf = "emptyResults" [textContent] = "emptyResults"></div>
   <div class="row" *ngFor="let newsItem of listOfNews">
       <app-news [item]="newsItem"></app-news>
+  </div>
+  <div *ngIf = "listOfWords.length > 0 ">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Words</th>
+        <th>Frequency</th>
+      </tr>
+      </thead>
+      <tbody>
+          <tr *ngFor="let wordItem of listOfWords">
+            <td [textContent] = "wordItem._id"></td>
+            <td [textContent] = "wordItem.value"></td>
+          </tr>
+      </tbody>
+    </table>
   </div>
 </div>

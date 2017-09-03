@@ -9,9 +9,13 @@ import { Observable } from 'rxjs/Observable';
 export class ApiService {
 
   private urlHost = 'http://localhost:8080';
-
-  public apiUrl = '/api/news';
-  public apiUrlAllNews = '/api/all_news';
+  
+  public apiUrl = {
+    'nearNews': '/api/news',
+    'allNews': '/api/all_news',
+    'countWords': '/api/words'
+  };
+  
   public urlGeo = 'https://maps.googleapis.com/maps/api/geocode/json?address=';
   public geoKey = '&key=AIzaSyBT8SGysuMw9yBYZQuRcHpRzEa5JbWWs1s';
 
@@ -29,7 +33,7 @@ export class ApiService {
      */
 
   public getAllNews(): any {
-    return this.http.get(this.urlHost + this.apiUrlAllNews)
+    return this.http.get(this.urlHost + this.apiUrl.allNews)
   }
 
   public getCoordinates(location: string):Observable<any> {
@@ -46,7 +50,11 @@ export class ApiService {
   }
 
   public getNearNews(lat, lng, distance): any {
-    var urlStr = this.urlHost + this.apiUrl + '?lat='+ lat +'&lng=' + lng + '&radius=' + distance;
+    var urlStr = this.urlHost + this.apiUrl.nearNews + '?lat='+ lat +'&lng=' + lng + '&radius=' + distance;
     return this.http.get(urlStr);
+  }
+  
+  public countWords() {
+    return this.http.get(this.urlHost + this.apiUrl.countWords);
   }
 }

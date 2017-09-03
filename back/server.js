@@ -36,7 +36,7 @@ router.get('/api/all_news', function (req, res) {
 });
 
 //count words
-router.get('/api/count_words', function (req, res) {
+router.get('/api/words', function (req, res) {
     dbNews.connectDB(urlDatabase).then(function (selDb) {
         dbNews.countWordsInCollection(collectionName, selDb, function (result, db) {
             var outputJSON = JSON.stringify(result);
