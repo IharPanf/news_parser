@@ -79,7 +79,6 @@ DB.prototype.returnNearNews = function (collectionName, db, lat, lng, distance, 
 
 DB.prototype.countWordsInCollection = function (collectionName, db, callback) {
     var collection = db.collection(collectionName);
-    console.log('Start...');
     collection.mapReduce(splitText, countWords, {out: "count_word"});
     return db.collection('count_word').find({}).sort({value:-1}).toArray(function (err, docs) {
         callback(docs, db);
@@ -87,7 +86,7 @@ DB.prototype.countWordsInCollection = function (collectionName, db, callback) {
 };
 
 function splitText() {
-    var words = this.fullText.split(" ");
+    var words = this.fullText.match(/[а-яА-Я]+(-[а-яА-Я]+)*/ig);
     if (words) {
         for(var i=0; i < words.length; i++) {
             emit(words[i].toLowerCase(), 1);
