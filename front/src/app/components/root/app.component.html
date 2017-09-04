@@ -51,6 +51,7 @@
     </div>
   </div>
   <hr>
+  <div *ngIf="errorStr" [textContent]="errorStr"></div>
   <div *ngIf = "emptyResults" [textContent] = "emptyResults"></div>
   <div class="row" *ngFor="let newsItem of listOfNews">
       <app-news [item]="newsItem"></app-news>
