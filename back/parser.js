@@ -32,6 +32,7 @@ function parseFullText(selNews) {
 
                 $('.b-article-info-tags li').each(function () {
                     var tags = $(this).text().split(':');
+                    tags[0] = tags[0].replace('.', ' ');
                     selNews.info_tag[tags[0]] = tags[1];
                 });
                 parseCoordinate(selNews).then(function () {
