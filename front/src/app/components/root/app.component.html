@@ -1,14 +1,12 @@
 <div class="container">
   <div class="row">
     <div class="col">
-      <h3>
-        {{title}}
-      </h3>
+      <h3 [textContent] = 'title'></h3>
     </div>
   </div>
   <div class="row">
     <div class="col">
-      <agm-map [latitude]="lat" [longitude]="lng">
+      <agm-map [latitude]="defaultLatitude" [longitude]="defaultlongitude">
         <div *ngFor="let newsItem of listOfNews">
           <agm-marker
              [latitude]="newsItem.location.coordinates[1]"
@@ -24,7 +22,7 @@
       <input type="button" name="countWords" class="btn btn-primary" (click)="countWords()" value="CountWords"/>
     </div>
     <div class="col-xs-2">
-      <input type="button" name="getNews" class="btn btn-primary" (click)="getAllNews()" value="Get all news"/>
+      <input type="button" name="getNews" class="btn btn-primary" (click)="loadNews()" value="Get all news"/>
     </div>
     <div class="col-xs-8">
       <form class="form-inline">
@@ -34,9 +32,10 @@
         </div>
         <div class="form-group mx-sm-3">
           <label for="distance">Distance: </label>
-          <input type="text" class="form-control" id="distance" placeholder="Distance (км)" #distance>
+          <input type="text" class="form-control" id="distance" placeholder="Distance (km)" #distance>
         </div>
-        <button type="submit" class="btn btn-primary" (click)="getCoordinates(location.value, distance.value)">
+        <button type="submit" class="btn btn-primary"
+                (click)="loadNewsByCoordinates(location.value, distance.value)">
           Get news for selected location
         </button>
       </form>
@@ -45,14 +44,14 @@
           <span>Selected location:</span>
           <span [textContent] = "locLat"></span>
           <span [textContent] = "locLng"></span>
-          <span [textContent] = "distance.value + ' км'"></span>
+          <span [textContent] = "distance.value + ' km'"></span>
         </div>
       </div>
     </div>
   </div>
   <hr>
-  <div *ngIf="errorStr" [textContent]="errorStr"></div>
-  <div *ngIf = "emptyResults" [textContent] = "emptyResults"></div>
+  <div *ngIf="errorMessage " [textContent]="errorMessage"></div>
+  <div *ngIf = "noResultMessage" [textContent] = "noResultMessage"></div>
   <div class="row" *ngFor="let newsItem of listOfNews">
       <app-news [item]="newsItem"></app-news>
   </div>

@@ -5,6 +5,7 @@ import { Component, Input} from '@angular/core';
   templateUrl: './news.component.html',
   styleUrls: ['./news.component.css']
 })
+
 export class NewsComponent {
   @Input() item: any;
 
@@ -15,5 +16,5 @@ export class NewsComponent {
   public toggleFullNews() {
     this.showFullNews = !this.showFullNews;
     return this.showFullNews;
-  }
+  };
 }

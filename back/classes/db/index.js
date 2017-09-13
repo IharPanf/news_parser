@@ -68,7 +68,7 @@ DB.prototype.returnNearNews = function (collectionName, db, lat, lng, distance, 
                 $near: {
                     $geometry: {type: "Point", coordinates: [parseFloat(lng), parseFloat(lat)]},
                     $minDistance: 0,
-                    $maxDistance: parseInt(distance, 10) * 1000
+                    $maxDistance: distance * 1000
                 }
             }
         }

@@ -8,116 +8,93 @@ import { ApiService } from './../../services/api.service';
 })
 
 export class AppComponent {
-  title = 'Self education: Парсер новостей (Mongo, NodeJS, Angular)';
-  lat = 53.9195866;
-  lng = 27.5807409;
+  title = 'News parser';
+  defaultLatitude = 53.9195866;
+  defaultlongitude = 27.5807409;
   listOfNews: any = [];
   listOfWords: any = [];
-  location = '';
-  distance: any;
-  locLat = '';
-  locLng = '';
-  emptyResults = '';
-  errorStr = '';
+  selectedLocationLatitude = '';
+  selectedLocationlongitude = '';
+  noResultMessage = '';
+  errorMessage = '';
+  
   constructor(private apiService: ApiService) {}
-
-  /**
-   * 
-   */
-  public getAllNews(): void {
-    this.setInitialValue();
+  
+  public loadNews(): void {
+    this.resetValue();
     this.apiService.getAllNews().subscribe(
-        (res) => {
-          if (res) {
-            this.listOfNews = res.json();
-            this.listOfWords = [];
+        (response) => {
+          if (response) {
+            this.listOfNews = response.json();
           }
         },
-        (err) => {
-          this.errorStr = 'Error connection to server..';
-          console.log(this.errorStr, err);
+        (error) => {
+          this.showErrorMessage(error);
         }
     );
-  }
-
-  /**
-   * 
-   * @param location
-   * @param distance
-   */
-  public getCoordinates(location: string, distance: any): void {
-    this.setInitialValue();
-    this.distance = distance;
-    if (location) {
+  };
+  
+  public loadNewsByCoordinates(location: string, distance: any): void {
+    this.resetValue();
+    distance = parseInt(distance, 10);
+    if (location && distance >= 0 ) {
       this.apiService.getCoordinates(location).subscribe(
-        (res) => {
-          if (res && res.results && res.results[0].geometry && res.results[0].geometry.location) {
-            this.locLat = res.results[0].geometry.location.lat;
-            this.locLng = res.results[0].geometry.location.lng;
-          
-            if (distance) {
-              this.getNearNews(this.locLat, this.locLng, distance);
-            }
-          }
+        (response) => {
+          if (response.results && response.results[0].geometry && response.results[0].geometry.location) {
+            this.selectedLocationLatitude = response.results[0].geometry.location.lat;
+            this.selectedLocationlongitude = response.results[0].geometry.location.lng;
+            this.getNearNews(this.selectedLocationLatitude, this.selectedLocationlongitude, distance);
+          } else {
+            this.noResultMessage = 'No news for selected location';
+          } 
         },
-        (err) => {
-          this.errorStr = 'Error connection to server..';
-          console.log(this.errorStr, err);
+        (error) => {
+          this.showErrorMessage(error);
         }
       );
     }
-  }
-
-  /**
-   * 
-   * @param lat
-   * @param lng
-   * @param distance
-   */
+  };
+  
   public getNearNews(lat: string, lng: string, distance: any): void {
-    this.setInitialValue();
+    this.resetValue();
     this.apiService.getNearNews(lat, lng, distance).subscribe(
-      (res) => {
-        if (res) {
-          this.listOfNews = res.json();
-          this.listOfWords = [];
-          this.emptyResults = '';
+      (response) => {
+        if (response) {
+          this.listOfNews = response.json();
           if (this.listOfNews.length === 0) {
-            this.emptyResults = 'Нет новостей в заданном радиусе от выбранной точки';
+            this.noResultMessage = 'No news in the specified radius from the selected point';
           }
         }
       },
-      (err) => {
-        this.errorStr = 'Error connection to server..';
-        console.log(this.errorStr, err);
+      (error) => {
+        this.showErrorMessage(error);
       }
     );
-  }
-
-  /**
-   * 
-   */
+  };
+  
   public countWords(): void {
-    this.setInitialValue();
+    this.resetValue();
     this.apiService.countWords().subscribe(
-      (res) => {
-        if (res) {
-          this.listOfWords = res.json();
+      (resonse) => {
+        if (resonse) {
+          this.listOfWords = resonse.json();
         }
       },
-      (err) => {
-        this.errorStr = 'Error connection to server..';
-        console.log(this.errorStr, err);
+      (error) => {
+        this.showErrorMessage(error);
       }
     );
-  }
-
-  /**
-   * 
-   */
-  private setInitialValue(): void {
-    this.errorStr = '';
+  };
+  
+  private resetValue(): void {
+    this.errorMessage = '';
     this.listOfNews = [];
     this.listOfWords = [];
-  }
+    this.noResultMessage = '';
+  };
+  
+  private showErrorMessage(error: any) {
+    this.errorMessage = 'Server connection error..';
+    console.log(this.errorMessage, error);
+  };
 }
