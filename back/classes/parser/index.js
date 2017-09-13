@@ -1,28 +1,21 @@
 var request = require("request");
 var cheerio = require("cheerio");
 var jsonfile = require('jsonfile');
-var async = require('async');
-var pCommandLine = require('optimist').argv;
-var assert = require('assert');
-
-var News = require('./classes/news');
-var DB = require('./classes/db');
 
 var fileOfSettings = "./../config.json";
 var settings = jsonfile.readFileSync(fileOfSettings);
-var collectionName = settings.collectionName;
-var urlDatabase = settings.mongoUrl + settings.dbName;
-var LIMIT = pCommandLine.limit || settings.limit;
+var News = require('./../../classes/news');
 
-var counterForParsing = 0;
-var listOfNews = [];
+function Parser (limit) {
+    this.promisesParseFullText = [];
+    this.selectedNews = new News();
+    this.counterForParsing = 0;
+    this.listOfNews = [];
+    this.limit = limit;
+}
 
-var dbNews = new DB();
-var selectedNews = new News();
-
-var promisesParseFullText = [];
-
-function parseFullText(selNews) {
+Parser.prototype.parseFullText = function (selNews) {
+    var self = this;
     return new Promise(function (resolve, reject) {
         request(selNews.fullNewsUrl, function (error, response, body) {
             if (!error) {
@@ -35,7 +28,7 @@ function parseFullText(selNews) {
                     tags[0] = tags[0].replace('.', ' ');
                     selNews.info_tag[tags[0]] = tags[1];
                 });
-                parseCoordinate(selNews).then(function () {
+                self.parseCoordinate(selNews).then(function () {
                     resolve()
                 })
             } else {
@@ -43,15 +36,16 @@ function parseFullText(selNews) {
             }
         });
     });
-}
+};
 
-function parseCoordinate(selNews) {
+Parser.prototype.parseCoordinate = function (selNews) {
+    var self = this;
     return new Promise(function (resolve, reject) {
-        selectedNews.getCoordinates(selNews.info_tag, settings.googleApiKey)
+        self.selectedNews.getCoordinates(selNews.info_tag, settings.googleApiKey)
             .then(function (res) {
                 selNews.location = {
                     type: "Point",
-                    coordinates: [res[0].latitude, res[0].longitude - 90] // 90 - convert longitude 
+                    coordinates: [res[0].longitude, res[0].latitude]
                 };
                 resolve();
             })
@@ -59,21 +53,23 @@ function parseCoordinate(selNews) {
                 reject();
                 console.log('Error getting coordinates:' + err);
             });
+        resolve();
     })
-}
+};
 
-function parseShortInformation(url) {
+Parser.prototype.parseInformation = function (url) {
+    var self = this;
     return new Promise(function (resolve, reject) {
         request(url, function (error, response, body) {
             if (!error) {
                 var $ = cheerio.load(body);
                 $('.b-section').each(function () {
-                    if (counterForParsing < LIMIT) {
+                    if (self.counterForParsing < self.limit) {
                         var currentCategoryNews = $(".b-lists-rubric .b-label", this).text();
                         $(".lists__li", this).each(function () {
-                            if (counterForParsing < LIMIT) {
-                                counterForParsing++;
-                                var currentNews = selectedNews.getNews();
+                            if (self.counterForParsing < self.limit) {
+                                self.counterForParsing++;
+                                var currentNews = self.selectedNews.getNews();
                                 currentNews.rubric = currentCategoryNews;
                                 var currentDate = $(this).attr('data-tm');
                                 currentNews.date = new Date(currentDate * 1000);
@@ -84,8 +80,8 @@ function parseShortInformation(url) {
 
                                 //parse full text for every news
                                 if (currentNews.fullNewsUrl) {
-                                    promisesParseFullText.push(parseFullText(currentNews).then(function () {
-                                        listOfNews.push(currentNews);
+                                    self.promisesParseFullText.push(self.parseFullText(currentNews).then(function () {
+                                        self.listOfNews.push(currentNews);
 
                                     }));
                                 }
@@ -97,27 +93,9 @@ function parseShortInformation(url) {
                 reject();
                 console.log("Error: " + error);
             }
-            resolve(listOfNews);
+            resolve(self.listOfNews);
         });
     })
-}
+};
 
-// Parser
-parseShortInformation(settings.urlParse).then(function (res) {
-    if (res) {
-        Promise.all(promisesParseFullText).then(function () {
-            var promisesInsertInDatabase = [];
-            dbNews.connectDB(urlDatabase).then(function (selDb) {
-                for (var i = 0; i < res.length; i++) {
-                    promisesInsertInDatabase.push(dbNews.insertRecord(res[i], collectionName, selDb));
-                }
-                Promise.all(promisesInsertInDatabase).then(function () {
-                    dbNews.createGeospatialIndex(collectionName, selDb);
-                    dbNews.createUniqueIndex(collectionName, selDb);
-                    selDb.close();
-                    console.log(promisesInsertInDatabase.length + ' documents were parsed. Connection close. Finish parsing...');
-                });
-            });
-        })
-    }
-});
+module.exports = Parser;

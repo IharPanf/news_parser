@@ -30,7 +30,7 @@ export class ApiService {
    * @param type
    * @param performanceId
    * @returns {any}
-     */
+   */
 
   public getAllNews(): any {
     return this.http.get(this.urlHost + this.apiUrl.allNews)

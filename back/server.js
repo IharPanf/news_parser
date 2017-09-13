@@ -5,7 +5,6 @@ var jsonfile = require('jsonfile');
 var finalhandler = require('finalhandler');
 var Router = require('router');
 
-//Todo need resolve duplicate
 var fileOfSettings = "./../config.json";
 var settings = jsonfile.readFileSync(fileOfSettings);
 var collectionName = settings.collectionName;
