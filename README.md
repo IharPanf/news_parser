@@ -6,6 +6,7 @@
 ---
 ### Back 
 **(все команды выполнять из каталога news_parser/back)**
+
 Установка зависимостей:
 ```
 npm install
@@ -24,7 +25,7 @@ node server
 ```
 Запуск линтера
 ```
-  npm run lint
+npm run lint
 ```
 ---
 ### Front
@@ -48,11 +49,11 @@ npm run start
 ```
 Запуск тестов:
 ```
-  ng test
+ng test
 ```
 Запуск линтера:
 ```
-  ng lint
+ng lint
 ```
 ---
 ### API
