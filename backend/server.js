@@ -63,7 +63,6 @@ router.get('/api/news', function (req, res) {
     });
 });
 
-
 var server = http.createServer(function (request, response) {
     response.writeHead(200,
         {
