@@ -6,7 +6,7 @@ var fileOfSettings = "./../config.json";
 var settings = jsonfile.readFileSync(fileOfSettings);
 var News = require('./../../classes/news');
 
-function Parser (limit) {
+function Parser(limit) {
     this.promisesParseFullText = [];
     this.selectedNews = new News();
     this.counterForParsing = 0;
@@ -43,9 +43,11 @@ Parser.prototype.parseCoordinate = function (selNews) {
     return new Promise(function (resolve, reject) {
         self.selectedNews.getCoordinates(selNews.info_tag, settings.googleApiKey)
             .then(function (res) {
+                var longitude = res[0].longitude ? res[0].longitude : settings.defLongitude;
+                var latitude = res[0].latitude ? res[0].latitude : settings.defLatitude;
                 selNews.location = {
                     type: "Point",
-                    coordinates: [res[0].longitude, res[0].latitude]
+                    coordinates: [longitude, latitude]
                 };
                 resolve();
             })
@@ -53,7 +55,6 @@ Parser.prototype.parseCoordinate = function (selNews) {
                 reject();
                 console.log('Error getting coordinates:' + err);
             });
-        resolve();
     })
 };
 

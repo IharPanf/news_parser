@@ -6,5 +6,7 @@
   "collectionName": "news_doc",
   "mongoUrl": "mongodb://localhost:27017/",
   "geocodeUrl": "https://maps.googleapis.com/maps/api/geocode/json?address=",
-  "googleApiKey": "AIzaSyBT8SGysuMw9yBYZQuRcHpRzEa5JbWWs1s"
+  "googleApiKey": "AIzaSyBT8SGysuMw9yBYZQuRcHpRzEa5JbWWs1s",
+  "defLongitude": 27.5807409,
+  "deflatitude": 53.9195866
 }

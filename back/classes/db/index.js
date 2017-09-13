@@ -1,6 +1,7 @@
 var MongoClient = require('mongodb').MongoClient;
 
-function DB() {}
+function DB() {
+}
 
 DB.prototype.connectDB = function (urlDB) {
     return new Promise(function (resolve, reject) {
@@ -49,13 +50,13 @@ DB.prototype.returnNews = function (item, collectionName, db, callback) {
 
 DB.prototype.createGeospatialIndex = function (collectionName, db) {
     var collection = db.collection(collectionName);
-    collection.createIndex( { location: "2dsphere" } );
+    collection.createIndex({location: "2dsphere"});
     console.log('Geospatial was created');
 };
 
 DB.prototype.createUniqueIndex = function (collectionName, db) {
     var collection = db.collection(collectionName);
-    collection.createIndex({ date: 1, shortDescription: 1 }, { unique: true });
+    collection.createIndex({date: 1, shortDescription: 1}, {unique: true});
     console.log('Composite unique index by date / time and name was created');
 };
 
@@ -63,13 +64,12 @@ DB.prototype.returnNearNews = function (collectionName, db, lat, lng, distance, 
     var collection = db.collection(collectionName);
     collection.find(
         {
-            location:
-                { $near :
-                    {
-                    $geometry: { type: "Point",  coordinates: [ parseFloat(lat), parseFloat(lng - 90) ] },
+            location: {
+                $near: {
+                    $geometry: {type: "Point", coordinates: [parseFloat(lng), parseFloat(lat)]},
                     $minDistance: 0,
                     $maxDistance: parseInt(distance, 10) * 1000
-            }
+                }
             }
         }
     ).toArray(function (err, docs) {
@@ -80,7 +80,7 @@ DB.prototype.returnNearNews = function (collectionName, db, lat, lng, distance, 
 DB.prototype.countWordsInCollection = function (collectionName, db, callback) {
     var collection = db.collection(collectionName);
     collection.mapReduce(splitText, countWords, {out: "count_word"});
-    return db.collection('count_word').find({}).sort({value:-1}).toArray(function (err, docs) {
+    return db.collection('count_word').find({}).sort({value: -1}).toArray(function (err, docs) {
         callback(docs, db);
     });
 };
@@ -88,7 +88,7 @@ DB.prototype.countWordsInCollection = function (collectionName, db, callback) {
 function splitText() {
     var words = this.fullText.match(/[а-яА-Я]+(-[а-яА-Я]+)*/ig);
     if (words) {
-        for(var i=0; i < words.length; i++) {
+        for (var i = 0; i < words.length; i++) {
             emit(words[i].toLowerCase(), 1);
         }
     }
@@ -96,7 +96,7 @@ function splitText() {
 
 function countWords(key, values) {
     var count = 0;
-    values.forEach(function(v) {
+    values.forEach(function (v) {
         count += v;
     });
     return count;

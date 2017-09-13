@@ -1,6 +1,7 @@
 var NodeGeocoder = require('node-geocoder');
 
-function News() {}
+function News() {
+}
 
 News.prototype.getNews = function () {
     return {
